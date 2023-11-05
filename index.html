@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калькулятор стоимости хранения стримов</title>
+    <!-- Подключаем Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-5">
+    <h2>Калькулятор стоимости хранения стримов</h2>
+    <form id="storageCalculator">
+        <div class="form-group">
+            <label for="usdRur">Курс USD:</label>
+            <input type="number" class="form-control" id="usdRur" placeholder="Рублей" required>
+        </div>
+        <div class="form-group">
+            <label for="days">Количество дней хранения:</label>
+            <input type="number" class="form-control" id="days" placeholder="Дней" required>
+        </div>
+        <div class="form-group">
+            <label for="streams">Количество стримов:</label>
+            <input type="number" class="form-control" id="streams" placeholder="Стримов" required>
+        </div>
+        <div class="form-group">
+            <label for="bitrate">Битрейт стрима:</label>
+            <select class="form-control" id="bitrate" required>
+                <option value="96">Аудио - 0.096 Mbit/s (например, для радио)</option>
+                <option value="320">Аудио - 0.320 Mbit/s (стандартное качество)</option>
+                <option value="1411">Аудио - 1.411 Mbit/s (качество CD)</option>
+                <option value="2000">Видео SD 480p (640x480) - 2 Mbit/s</option>
+                <option value="5000">Видео HD 720p (1280x720) - 5 Mbit/s</option>
+                <option value="8000">Видео Full HD 1080p (1920x1080) - 8 Mbit/s</option>
+                <option value="16000">Видео 4K UHD (3840x2160) - 16 Mbit/s</option>
+                <option value="50000">Видео 8K UHD (7680x4320) - 50 Mbit/s</option>
+                <!-- Добавьте другие опции сюда -->
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="pricePerTB">Стоимость 1 Tb HDD (в рублях):</label>
+            <input type="number" class="form-control" id="pricePerTB" placeholder="Поделите цену диска на объем в Тб" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Рассчитать</button>
+    </form>
+    <div class="mt-3">
+        <p>Объем хранения: <span id="totalStorage" style="font-weight: bold">0</span></p>
+        <p>Требуемая полоса пропускания: <span id="totalBandwidth" style="font-weight: bold">0</span></p>
+        <p>Стоимость покупки хранилища: <span id="totalCost" style="font-weight: bold">0</span></p>
+    </div>
+</div>
+
+<!-- Подключаем Bootstrap JS и Popper.js -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+    document.getElementById('storageCalculator').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const days = parseInt(document.getElementById('days').value);
+        const streams = parseInt(document.getElementById('streams').value);
+        const bitrateMbps = parseInt(document.getElementById('bitrate').value) / 1024; // Битрейт в Мбит/с
+        const pricePerTB = parseFloat(document.getElementById('pricePerTB').value); // Цена 1 Тб в рублях
+        const usdRur = parseInt(document.getElementById('usdRur').value);
+
+        const hoursPerDay = 24; // Количество часов в сутках
+        const secondsPerHour = 3600; // Количество секунд в часе
+        const MbitPerTb = 1024 * 1024 * 8; // Количество мегабит в терабайте
+
+        // Объем данных одного стрима за один день в Тб
+        const dailyDataPerStreamTb = (bitrateMbps * secondsPerHour * hoursPerDay) / MbitPerTb;
+
+        // Общий объем хранения для всех стримов за весь период в Тб
+        const totalStorageTb = dailyDataPerStreamTb * days * streams;
+
+        // Итоговая стоимость хранения
+        const totalCost = totalStorageTb * pricePerTB;
+        const totalCostUSD = totalCost / usdRur;
+
+        // Требуемая полоса пропускания в Мбит/с
+        const totalBandwidthMbps = bitrateMbps * streams;
+
+        // Переводим Мбит/с в Гбит/с
+        const totalBandwidthGbps = totalBandwidthMbps / 1024;
+
+        // Выводим результаты
+        document.getElementById('totalStorage').textContent = `${totalStorageTb.toFixed(2)} Тб`;
+        document.getElementById('totalCost').textContent = `${totalCost.toFixed(2)} рублей [${totalCostUSD.toFixed(2)} USD]`;
+        document.getElementById('totalBandwidth').textContent = `${totalBandwidthGbps.toFixed(3)} Гбит/с (${totalBandwidthMbps} Мбит/с)`;
+    });
+</script>
+</body>
+</html>
