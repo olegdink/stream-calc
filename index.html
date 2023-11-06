@@ -37,7 +37,14 @@
                 <!-- Добавьте другие опции сюда -->
             </select>
         </div>
-
+        <div class="form-group">
+            <label for="priceDisk">HDD SATA (либо выбираем диск, либо ниже стоимость 1Тб):</label>
+            <select class="form-control" id="priceDisk">
+                <option value="">-- Не выбрано --</option>
+                <option value="2075">HDD SATA 3,5" Toshiba MG10 Ent.Cap. 20TB 6Gb/s 7.2K 512MB 512e 281MB/s 4.2ms 2.5M_MTBF 0.35% AFR  4.4/8. [ 41 503 ₽, Россия, Покупка ]</option>
+                <option value="3638">HDD SATA 3,5" WD RED PRO            20TB 6Gb/s 7.2K 512MB AF   268MB/s 4.2ms 1.0M_MTBF 300TB/YEAR 3.8/6. [ 72 773 ₽, Россия, Покупка ]</option>
+            </select>
+        </div>
         <div class="form-group">
             <label for="pricePerTB">Стоимость 1 Tb HDD (в рублях):</label>
             <input type="number" class="form-control" id="pricePerTB" placeholder="Поделите цену диска на объем в Тб" required>
@@ -62,8 +69,19 @@
         const days = parseInt(document.getElementById('days').value);
         const streams = parseInt(document.getElementById('streams').value);
         const bitrateMbps = parseInt(document.getElementById('bitrate').value) / 1024; // Битрейт в Мбит/с
-        const pricePerTB = parseFloat(document.getElementById('pricePerTB').value); // Цена 1 Тб в рублях
+        // const pricePerTB = parseFloat(document.getElementById('pricePerTB').value); // Цена 1 Тб в рублях
         const usdRur = parseInt(document.getElementById('usdRur').value);
+        const selectedDisk = document.getElementById('priceDisk').value;
+
+        // Если диск не выбран, используем значение из pricePerTB
+        if (!selectedDisk) {
+            pricePerTB = parseFloat(document.getElementById('pricePerTB').value);
+        } else {
+            // Если диск выбран, берем его стоимость и устанавливаем ее в pricePerTB
+            pricePerTB = parseFloat(selectedDisk);
+            document.getElementById('pricePerTB').value = pricePerTB;
+            document.getElementById('pricePerTB').readOnly = true;
+        }
 
         const hoursPerDay = 24; // Количество часов в сутках
         const secondsPerHour = 3600; // Количество секунд в часе
@@ -90,6 +108,20 @@
         document.getElementById('totalCost').textContent = `${totalCost.toFixed(2)} рублей [${totalCostUSD.toFixed(2)} USD]`;
         document.getElementById('totalBandwidth').textContent = `${totalBandwidthGbps.toFixed(3)} Гбит/с (${totalBandwidthMbps} Мбит/с)`;
     });
+    
+    document.getElementById('priceDisk').addEventListener('change', function() {
+    const selectedDisk = this.value;
+    const pricePerTBInput = document.getElementById('pricePerTB');
+
+    if (selectedDisk) {
+        pricePerTBInput.value = parseFloat(selectedDisk);
+        pricePerTBInput.readOnly = true;
+    } else {
+        pricePerTBInput.value = '';
+        pricePerTBInput.readOnly = false;
+    }
+    });
+
 </script>
 </body>
 </html>
