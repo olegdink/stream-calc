@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Simple Music and Video Player</title>
+    <style>
+        #progress-bar {
+            width: 0%;
+            height: 20px;
+            background-color: green;
+        }
+        #progress-container {
+            width: 100%;
+            background-color: #ddd;
+        }
+        #playlist-list li {
+            cursor: pointer;
+            list-style-type: none;
+        }
+    </style>
+</head>
+<body>
+
+<div>
+    <h2 id="track-name">Track Name</h2>
+    <audio id="audio-player" src="" hidden></audio>
+    <video id="video-player" width="320" height="240" controls hidden></video>
+    <div id="progress-container">
+        <div id="progress-bar"></div>
+    </div>
+    <button onclick="previousTrack()">Previous</button>
+    <button id="play-pause-button" onclick="togglePlay()">Play</button>
+    <button onclick="nextTrack()">Next</button>
+    <p>Time: <span id="current-time">00:00</span> / <span id="duration">00:00</span></p>
+</div>
+
+<div id="playlist">
+    <h3>Playlist</h3>
+    <ul id="playlist-list">
+        <!-- Пункты плейлиста будут добавлены здесь -->
+    </ul>
+</div>
+
+<script>
+    let currentTrack = 0;
+    let isPlaying = false;
+    let mediaType = 'audio'; // or 'video'
+    const tracks = [
+        { type: 'audio', title: 'Audio Track 1', src: 'https://file-examples.com/storage/fe8119f4e865f33329898be/2017/11/file_example_MP3_700KB.mp3' },
+        { type: 'audio', title: 'Audio Track 2', src: 'https://samples-files.com/samples/Audio/mp3/sample-file-1.mp3' },
+        { type: 'video', title: 'Video Track 1', src: 'https://file-examples.com/storage/fe8119f4e865f33329898be/2017/04/file_example_MP4_480_1_5MG.mp4' }
+    ];
+    const audioPlayer = document.getElementById('audio-player');
+    const videoPlayer = document.getElementById('video-player');
+    const trackName = document.getElementById('track-name');
+    const progressBar = document.getElementById('progress-bar');
+    const currentTimeDisplay = document.getElementById('current-time');
+    const durationDisplay = document.getElementById('duration');
+
+    function loadTrack(index) {
+        const track = tracks[index];
+        mediaType = track.type;
+        stopAllMedia(); // Stop all media before loading new track
+        if (mediaType === 'audio') {
+            audioPlayer.src = track.src;
+            audioPlayer.style.display = 'block';
+            videoPlayer.style.display = 'none';
+        } else if (mediaType === 'video') {
+            videoPlayer.src = track.src;
+            videoPlayer.style.display = 'block';
+            audioPlayer.style.display = 'none';
+        }
+        trackName.innerHTML = track.title;
+        progressBar.style.width = '0%';
+        currentTimeDisplay.innerHTML = '00:00';
+        durationDisplay.innerHTML = '00:00';
+        updatePlaylist();
+        if (isPlaying) {
+            togglePlay(); // Continue playing new track if player was playing
+        }
+    }
+
+    function stopAllMedia() {
+        audioPlayer.pause();
+        audioPlayer.currentTime = 0;
+        videoPlayer.pause();
+        videoPlayer.currentTime = 0;
+    }
+
+    function togglePlay() {
+        const player = mediaType === 'audio' ? audioPlayer : videoPlayer;
+        if (player.paused) {
+            player.play();
+            isPlaying = true;
+        } else {
+            player.pause();
+            isPlaying = false;
+        }
+    }
+
+    function nextTrack() {
+        currentTrack = (currentTrack + 1) % tracks.length;
+        loadTrack(currentTrack);
+    }
+
+    function previousTrack() {
+        currentTrack = (currentTrack - 1 + tracks.length) % tracks.length;
+        loadTrack(currentTrack);
+    }
+
+    function updateProgressBar() {
+        const player = mediaType === 'audio' ? audioPlayer : videoPlayer;
+        const currentTime = player.currentTime;
+        const duration = player.duration;
+        const percentage = (currentTime / duration) * 100;
+        progressBar.style.width = `${percentage}%`;
+        currentTimeDisplay.innerHTML = new Date(currentTime * 1000).toISOString().substr(14, 5);
+        durationDisplay.innerHTML = new Date(duration * 1000).toISOString().substr(14, 5);
+    }
+
+    function updatePlaylist() {
+        const playlistList = document.getElementById('playlist-list');
+        playlistList.innerHTML = ''; // Clear current list
+        tracks.forEach((track, index) => {
+            const trackElement = document.createElement('li');
+            trackElement.textContent = track.title;
+            trackElement.onclick = () => { switchTrack(index); };
+            if (index === currentTrack) {
+                trackElement.style.fontWeight = 'bold'; // Highlight current track
+            }
+            playlistList.appendChild(trackElement);
+        });
+    }
+
+    function switchTrack(index) {
+        currentTrack = index;
+        loadTrack(currentTrack);
+    }
+
+    audioPlayer.addEventListener('timeupdate', updateProgressBar);
+    videoPlayer.addEventListener('timeupdate', updateProgressBar);
+
+    // Initial track load
+    loadTrack(currentTrack);
+
+    audioPlayer.addEventListener('ended', nextTrackAuto);
+    videoPlayer.addEventListener('ended', nextTrackAuto);
+
+    function nextTrackAuto() {
+        if (currentTrack + 1 < tracks.length) {
+            nextTrack(); // Переключаем на следующий трек
+            // Поскольку nextTrack обновляет currentTrack,
+            // мы проверяем, был ли плеер воспроизведения в состоянии воспроизведения до переключения
+            if (!isPlaying) {
+                togglePlay(); // Если плеер не был в воспроизведении, начинаем воспроизводить автоматически
+            }
+        } else {
+            // Если это был последний трек в плейлисте
+            isPlaying = false; // Останавливаем воспроизведение, не меняя трек
+            // Если хотите, чтобы плеер начал сначала, можно добавить сюда loadTrack(0) и togglePlay().
+        }
+    }
+    document.getElementById('progress-container').addEventListener('click', function(e) {
+        const clickPosition = (e.pageX - this.offsetLeft) / this.offsetWidth;
+        const jumpTime = clickPosition * (mediaType === 'audio' ? audioPlayer.duration : videoPlayer.duration);
+        if (mediaType === 'audio') {
+            audioPlayer.currentTime = jumpTime;
+        } else {
+            videoPlayer.currentTime = jumpTime;
+        }
+    });
+
+    // Измените функцию togglePlay, чтобы она меняла текст кнопки
+    function togglePlay() {
+        const player = mediaType === 'audio' ? audioPlayer : videoPlayer;
+        const playPauseButton = document.getElementById('play-pause-button'); // Получаем кнопку
+        if (player.paused) {
+            player.play();
+            isPlaying = true;
+            playPauseButton.textContent = 'Pause'; // Изменяем текст кнопки на "Pause"
+        } else {
+            player.pause();
+            isPlaying = false;
+            playPauseButton.textContent = 'Play'; // Изменяем текст кнопки на "Play"
+        }
+    }
+</script>
+</body>
+</html>
