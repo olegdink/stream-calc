@@ -77,7 +77,7 @@
             playlistDisplay.innerHTML = ''; // Очистить предыдущий плейлист
 
             var xhr = new XMLHttpRequest();
-            xhr.open('POST', 'http://fmlite.dink.ru:8090/getPlaylist', true);
+            xhr.open('POST', 'https://fmlite.dink.ru/getPlaylist', true);
             xhr.setRequestHeader('Content-Type', 'application/json');
             xhr.onreadystatechange = function () {
                 if (xhr.readyState == 4 && xhr.status == 200) {
