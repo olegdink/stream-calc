@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>АВП и Статистика - Антипиратка</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        .header {
+            background-color: #1f2937;
+            color: #ffffff;
+            padding: 30px 0;
+            text-align: center;
+        }
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        .header p {
+            font-size: 1.2rem;
+            font-weight: 300;
+        }
+        .container {
+            margin-top: 30px;
+        }
+        .table-responsive {
+            margin-top: 20px;
+        }
+        .table th {
+            background-color: #3b82f6;
+            color: white;
+        }
+        .table tbody tr {
+            background-color: #ffffff;
+            transition: background-color 0.3s;
+        }
+        .table tbody tr:hover {
+            background-color: #e5f3ff;
+        }
+        .table tbody td {
+            vertical-align: middle;
+        }
+        .fa {
+            margin-right: 8px;
+        }
+        .stats {
+            font-weight: 600;
+            color: #2563eb;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Section -->
+    <header class="header">
+        <div class="container">
+            <h1>Ваши АВП и Статистика</h1>
+            <p>Отслеживайте защиту и результаты по каждому из ваших аудиовизуальных произведений</p>
+        </div>
+    </header>
+
+    <!-- Content Section -->
+    <section class="container">
+        <h2>Список ваших АВП</h2>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>Название АВП</th>
+                        <th>Дата добавления</th>
+                        <th>Выкупленный трафик</th>
+                        <th>Просмотры</th>
+                        <th>Подписки</th>
+                        <th>Предотвращённые убытки</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Фильм 1</td>
+                        <td>12.09.2024</td>
+                        <td><i class="fas fa-chart-line stats"></i> 15,000 переходов</td>
+                        <td><i class="fas fa-eye stats"></i> 12,500 просмотров</td>
+                        <td><i class="fas fa-user-plus stats"></i> 320 подписок</td>
+                        <td><i class="fas fa-dollar-sign stats"></i> 250,000 руб.</td>
+                        <td><button class="btn btn-primary btn-sm">Подробнее</button></td>
+                    </tr>
+                    <tr>
+                        <td>Сериал 2</td>
+                        <td>10.09.2024</td>
+                        <td><i class="fas fa-chart-line stats"></i> 25,000 переходов</td>
+                        <td><i class="fas fa-eye stats"></i> 20,800 просмотров</td>
+                        <td><i class="fas fa-user-plus stats"></i> 500 подписок</td>
+                        <td><i class="fas fa-dollar-sign stats"></i> 450,000 руб.</td>
+                        <td><button class="btn btn-primary btn-sm">Подробнее</button></td>
+                    </tr>
+                    <tr>
+                        <td>Документальный фильм 3</td>
+                        <td>08.09.2024</td>
+                        <td><i class="fas fa-chart-line stats"></i> 5,500 переходов</td>
+                        <td><i class="fas fa-eye stats"></i> 4,300 просмотров</td>
+                        <td><i class="fas fa-user-plus stats"></i> 100 подписок</td>
+                        <td><i class="fas fa-dollar-sign stats"></i> 100,000 руб.</td>
+                        <td><button class="btn btn-primary btn-sm">Подробнее</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Footer Section -->
+    <footer>
+        <div class="container">
+            <p class="text-center" style="padding: 20px 0; background-color: #1f2937; color: white;">&copy; 2024 Антипиратка и Антипират. Все права защищены.</p>
+        </div>
+    </footer>
+
+</body>
+</html>
